@@ -11,7 +11,7 @@ _mage2docker_magento () {
 }
 
 _mage2docker_mage() {
-	docker exec -it -u www-data $1 bin/magento $2
+	docker exec -it -u 33 $1 bin/magento $2
 }
 
 _mage2docker_container_ip() {
@@ -19,11 +19,11 @@ _mage2docker_container_ip() {
 }
 
 _mage2docker_report() {
-	compadd `docker exec -u www-data $1 ls -tr var/report`
+	compadd `docker exec -u 33 $1 ls -tr var/report`
 }
 
 _mage2docker_log(){
-	compadd `docker exec -u www-data $1 ls -tr var/log`
+	compadd `docker exec -u 33 $1 ls -tr var/log`
 }
 
 _mage2docker_mysql_data() {
@@ -43,14 +43,14 @@ _mage2docker() {
     _arguments \
         '1: :->containerName'\
         '2: :->command' \
-	'3: :->options'
+		'3: :->options'
 
     case $state in
     containerName)
         compadd $(_docker_get_container_name)
     ;;
     command)
-	compadd "$@" ash ash-magento bash-www bash logs magento mage mage-cache mage-reindex mage-di mage-upgrade mage-report mage-log grunt watch rename rm restart stop inspect top mysqldump mysql ip vst varnish-purge redis-flushall
+	compadd "$@" ash ash-user bash-www bash logs magento mage mage-cache mage-reindex mage-di mage-upgrade mage-report mage-log grunt watch rename rm restart stop inspect top mysqldump mysql ip vst varnish-purge redis-flushall
     ;;
     options)
         case $words[3] in
@@ -78,19 +78,22 @@ mage2docker () {
 	docker logs -f $1
 	;;
    ash)
-	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u root $1 ash -l
+	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 0 $1 ash -l
 	;;
-   ash-magento)
-	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u magento $1 ash -l
+   ash-user)
+	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 1000 $1 ash -l
 	;;
    bash)
-	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u root $1 bash -l
+	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 0 $1 bash -l
+	;;
+   www)
+	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 1000 $1 bash -l
 	;;
    bash-www)
-	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u www-data $1 bash -l
+	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 33 $1 bash -l
 	;;
    magento)
-	docker exec -it -u www-data $1 bin/magento
+	docker exec -it -u 33 $1 bin/magento
 	;;
    mage)$
 	_mage2docker_mage $1 $3
@@ -111,25 +114,25 @@ mage2docker () {
 	_mage2docker_mage $1 setup:static-content:deploy
 	;;
    grunt)
-	docker exec -it -u www-data $1 grunt
+	docker exec -it -u 33 $1 grunt
 	;;
    watch)
-	docker exec -it -u www-data $1 grunt watch
+	docker exec -it -u 33 $1 grunt watch
 	;;
    mage-report)
-	docker exec -it -u www-data $1 cat var/report/$3
+	docker exec -it -u 33 $1 cat var/report/$3
    ;;
    redis-flushall)
 	docker exec -it $1 redis-cli flushall
    ;;
    vst)
-	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u root $1 varnishstat
+	docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 0 $1 varnishstat
    ;;
    varnish-purge)
         docker exec -it $1 varnishadm "ban req.url ~ /"
    ;;
    mage-log)
-	docker exec -it -u www-data $1 tail -f var/log/$3
+	docker exec -it -u 33 $1 tail -f var/log/$3
    ;;
 	 #new informations
 	 ip)
@@ -149,7 +152,7 @@ mage2docker () {
 	if [ ! "$1" ]; then
    		docker ps
 	else
-		docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u magento $1 ash -l
+		docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) -u 1000 $1 ash -l
 	fi
    	;;
    esac
