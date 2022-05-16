@@ -14,11 +14,47 @@ Plugin for Oh-My-Zsh bash that makes it easy to work with Docker and Magento 2. 
 
 - Docker
 - Oh-My-Zsh [www](https://github.com/robbyrussell/oh-my-zsh)
+- Tups (packages)
 
 ## Instalation
 
 - Clone a repository to **~/.oh-my-zsh/custom/plugins**
 - In the file **~/.zshrc**, add an entry **plugins=(mage2docker)**
+
+
+## Help
+
+"ash" 
+
+"ash-user" 
+
+"bash-www"
+
+"bash"
+
+"logs"
+"magento"
+"mage"
+"mage-cache"
+"mage-reindex"
+"mage-di"
+"mage-upgrade"
+"mage-report"
+"mage-log"
+"grunt"
+"watch"
+"rename"
+"rm"
+"restart"
+"stop"
+"inspect"
+"top"
+"mysqldump"
+"mysql"
+"ip"
+"vst"
+"varnish-purge"
+"redis-flushall"
 
 ## License
 ```

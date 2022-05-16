@@ -66,6 +66,8 @@ _mage2docker_log() {
 _mage2docker_mysql_data() {
 	printf '%s ' 'User name:'
 	read user
+	printf '%s ' 'User password:'
+	read password
 	printf '%s ' 'Database name:'
 	read database
 	printf '%s ' 'file name:'
@@ -178,12 +180,12 @@ mage2docker() {
 		;;
 	mysqldump)
 		_mage2docker_mysql_data
-		mysqldump -h$(_mage2docker_container_ip $1) -u$user -p $database >$file
+		docker exec $1 /usr/bin/mysqldump -u $user --password=$password $database > $file.sql
 		echo "Success database backup was created"
 		;;
 	mysql)
 		_mage2docker_mysql_data
-		mysql -h$(_mage2docker_container_ip $1) -u$user -p $database <$file
+		docker exec $1 /usr/bin/mysql -u $user --password=$password $database < $file.sql
 		echo "Success database restore"
 		;;
 	help)
