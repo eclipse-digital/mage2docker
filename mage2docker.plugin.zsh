@@ -29,6 +29,7 @@ _m2d_commands() {
 		"vst"
 		"varnish-purge"
 		"redis-flushall"
+		"nginx-reload"
 	)
 
 	echo ${ids[*]// /}
@@ -170,6 +171,9 @@ mage2docker() {
 		;;
 	varnish-purge)
 		docker exec -it $1 varnishadm "ban req.url ~ /"
+		;;
+	nginx-reload)
+		docker exec $1 nginx -s reload
 		;;
 	mage-log)
 		docker exec -it -u 33 $1 tail -f var/log/$3
