@@ -30,6 +30,7 @@ _m2d_commands() {
 		"varnish-purge"
 		"redis-flushall"
 		"nginx-reload"
+		"stop-all"
 	)
 
 	echo ${ids[*]// /}
@@ -49,7 +50,7 @@ _mage2docker_magento() {
 }
 
 _mage2docker_mage() {
-	docker exec -it -u 33 $1 bin/magento $2
+	docker exec -it -u 1000 $1 bin/magento $2
 }
 
 _mage2docker_container_ip() {
@@ -155,13 +156,13 @@ mage2docker() {
 		_mage2docker_mage $1 setup:static-content:deploy
 		;;
 	grunt)
-		docker exec -it -u 33 $1 grunt
+		docker exec -it -u 1000 $1 grunt
 		;;
 	watch)
-		docker exec -it -u 33 $1 grunt watch
+		docker exec -it -u 1000 $1 grunt watch
 		;;
 	mage-report)
-		docker exec -it -u 33 $1 cat var/report/$3
+		docker exec -it $1 cat var/report/$3
 		;;
 	redis-flushall)
 		docker exec -it $1 redis-cli flushall
@@ -194,6 +195,9 @@ mage2docker() {
 		;;
 	help)
 		_zshm2d_usage
+		;;
+	stop-all)
+		docker stop $(docker ps -qa)
 		;;
 	*)
 		if [ ! "$1" ]; then
